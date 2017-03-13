@@ -48,7 +48,7 @@ function mirror_repos()
     done
 }
 
-if [ -z $REPOS ];
+if [ -z "$REPOS" ];
 then
     echo "Usage:"
     echo "  $0 [REPOSITORY_NAME]"
