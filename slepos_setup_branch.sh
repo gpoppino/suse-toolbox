@@ -75,6 +75,11 @@ function validate_posadmin_command()
     [ $RET -ne 0 ] && exit 1
 }
 
+function show_message()
+{
+    echo $@ | awk '{ printf "%-55s ", $0 }'
+}
+
 function show_config_parameters()
 {
     echo
@@ -93,7 +98,7 @@ function show_config_parameters()
     echo "* Server IP address: ${SERVER_IP}"
     echo "* Server name: ${SERVER_PREFIX}${STORE}"
     echo
-    echo -n "Continue? (Y): "
+    echo -n "Continue? (Y/n): "
     read confirmation
 
     [[ $confirmation != "Y" ]] && exit 0
@@ -103,16 +108,15 @@ show_config_parameters
 
 # Setup Organizational Unit
 #
-# ${SUDO} ${POSADMIN} --base o=${ORGANIZATION},c=${COUNTRY} --add --organizationalUnit --ou ${OU} --description 'My OU' \
-#     --scAllowRoles ${ALLOW_ROLES} --scAllowGlobalRoles ${ALLOW_GLOBAL_ROLES}
-# validate_posadmin_command $?
-
+#show_message "Adding organizational unit ${OU}..."
+#${SUDO} ${POSADMIN} --base o=${ORGANIZATION},c=${COUNTRY} --add --organizationalUnit --ou ${OU} --description 'My OU'
+#validate_posadmin_command $?
 
 #
 # Setup store
 #
 
-echo -n "Setting up ${STORE} in ${OU}..."
+show_message "Setting up store ${STORE} in ${OU}..."
 ${SUDO} ${POSADMIN} \
   --base ou=${OU},o=${ORGANIZATION},c=${COUNTRY} --add --scLocation --cn ${STORE_PREFIX}${STORE} \
   --ipNetworkNumber $NETWORK --ipNetmaskNumber $MASK \
@@ -124,11 +128,16 @@ ${SUDO} ${POSADMIN} \
   --userPassword ${STORE_PASSWORD}
 validate_posadmin_command $?
 
+show_message "Setting up roles permissions..."
+${SUDO} ${POSADMIN} --DN cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} --modify \
+    --scLocation --scAllowRoles ${ALLOW_ROLES} --scAllowGlobalRoles ${ALLOW_GLOBAL_ROLES}
+validate_posadmin_command $?
+
 #
 # Add container for branch servers
 #
 
-echo -n "Adding server container..."
+show_message "Adding server container..."
 ${SUDO} ${POSADMIN} --base cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} --add --scServerContainer --cn server
 validate_posadmin_command $?
 
@@ -137,7 +146,7 @@ validate_posadmin_command $?
 #
 # Note: hostname must be equal to LDAP name => ${SERVER_PREFIX}${STORE}.${STORE_PREFIX}${STORE}.${OU}.${ORGANIZATION}.${COUNTRY}
 
-echo -n "Adding store server ${SERVER_PREFIX}${STORE}..."
+show_message "Adding store server ${SERVER_PREFIX}${STORE}..."
 ${SUDO} ${POSADMIN} --base cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} --add --scBranchServer --cn ${SERVER_PREFIX}${STORE}
 validate_posadmin_command $?
 
@@ -145,7 +154,7 @@ validate_posadmin_command $?
 # Add ethernet card object
 #
 
-echo -n "Adding ethernet card (eth0) object for server..."
+show_message "Adding ethernet card (eth0) object for server..."
 ${SUDO} ${POSADMIN} --base cn=${SERVER_PREFIX}${STORE},cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} --add --scNetworkcard \
     --scDevice eth0 --ipHostNumber ${SERVER_IP}
 validate_posadmin_command $?
@@ -156,7 +165,7 @@ validate_posadmin_command $?
 #
 # Note: ${SERVER_IP} is the branch server IP address
 
-echo -n "Adding DNS service..."
+show_message "Adding DNS service..."
 ${SUDO} ${POSADMIN} \
     --base cn=${SERVER_PREFIX}${STORE},cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} \
     --add --scService --cn dns --ipHostNumber ${SERVER_IP} \
@@ -164,7 +173,7 @@ ${SUDO} ${POSADMIN} \
     --scServiceStatus TRUE
 validate_posadmin_command $?
 
-echo -n "Adding DHCP service..."
+show_message "Adding DHCP service..."
 ${SUDO} ${POSADMIN} \
     --base cn=${SERVER_PREFIX}${STORE},cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} \
     --add --scService --cn dhcp --ipHostNumber ${SERVER_IP} \
@@ -173,7 +182,7 @@ ${SUDO} ${POSADMIN} \
     --scServiceStartScript dhcpd --scServiceStatus TRUE
 validate_posadmin_command $?
 
-echo -n "Adding TFTP service..."
+show_message "Adding TFTP service..."
 ${SUDO} ${POSADMIN} \
     --base cn=${SERVER_PREFIX}${STORE},cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} \
     --add --scService --cn tftp --ipHostNumber ${SERVER_IP} \
@@ -181,7 +190,7 @@ ${SUDO} ${POSADMIN} \
     --scServiceStartScript atftpd --scServiceStatus TRUE
 validate_posadmin_command $?
 
-echo -n "Adding POSLEASES service..."
+show_message "Adding POSLEASES service..."
 ${SUDO} ${POSADMIN} \
     --base cn=${SERVER_PREFIX}${STORE},cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} \
     --add --scService --cn posleases --scDnsName posleases \
@@ -191,7 +200,7 @@ ${SUDO} ${POSADMIN} \
     --scServiceStatus TRUE
 validate_posadmin_command $?
 
-echo -n "Adding POSASWATCH service..."
+show_message "Adding POSASWATCH service..."
 ${SUDO} ${POSADMIN} \
     --base cn=${SERVER_PREFIX}${STORE},cn=server,cn=${STORE_PREFIX}${STORE},ou=${OU},o=${ORGANIZATION},c=${COUNTRY} \
     --add --scService --cn posaswatch --ipHostNumber ${SERVER_IP} \
@@ -199,6 +208,6 @@ ${SUDO} ${POSADMIN} \
     --scServiceStartScript posASWatch --scServiceStatus TRUE
 validate_posadmin_command $?
 
-echo -n "Validating store setup..."
+show_message "Validating store setup..."
 ${SUDO} ${POSADMIN} --validate
 validate_posadmin_command $?
