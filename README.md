@@ -20,6 +20,9 @@ The following scripts are included, grouped by product or tool:
     - **suma_sync_repos.sh**
     Script to facilitate mirroring every channel that has been previously
     enabled on SUMA.
+    - **suma_create_landscape_channels.sh**
+    Script to create landscape channels as described in the scenario presented
+    in the product's best practices.
 
 - [Subscription Manager Tool](https://www.suse.com/products/subscription-management-tool/):
     - **smt_mirror_repo_by_name.sh**
