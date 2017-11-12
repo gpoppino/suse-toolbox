@@ -36,8 +36,13 @@ The following scripts are included, grouped by product or tool:
    This script reads the information of every patch available and paginates it
    through `less`.
 
+- [SUSE Enterprise Storage](https://www.suse.com/products/suse-enterprise-storage/):
+    - **ses_zap_disks.sh**
+    Script to zap all the disks in a Linux system, except for the ones that you
+    specify. Useful to setup disks for SES.
+
 
 ## Author
 
-Geronimo Poppino <[gresco@gmail.com](mailto:gresco@gmail.com)>
+Geronimo Poppino <[gp@geronimo.guru](mailto:gp@geronimo.guru)>
 
