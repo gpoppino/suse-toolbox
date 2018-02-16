@@ -44,5 +44,5 @@ The following scripts are included, grouped by product or tool:
 
 ## Author
 
-Geronimo Poppino <[gp@geronimo.guru](mailto:gp@geronimo.guru)>
+Geronimo Poppino <[gresco@gmail.com](mailto:gresco@gmail.com)>
 
