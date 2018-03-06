@@ -63,7 +63,7 @@ local image_dn=$4
 
     show_message "Adding cash register ${object_name}..."
     ${SUDO} ${POSADMIN} --base $base --add --scCashRegister \
-        --cn $object_name --scCashRegisterName $register_name \
+        --cn $object_name --scCashRegisterName "$register_name" \
         --scPosImageDn $image_dn
     validate_command $?
 }
@@ -308,7 +308,7 @@ then
     BASE="cn=${ROLE_NAME},${BASE}"
 fi
 
-add_cash_register $BASE $OBJECT $REGISTER_NAME cn=${IMAGE_CN},cn=default,cn=global,o=$ORG,c=$COUNTRY
+add_cash_register $BASE $OBJECT "$REGISTER_NAME" cn=${IMAGE_CN},cn=default,cn=global,o=$ORG,c=$COUNTRY
 add_hard_disk "cn=$OBJECT,$BASE" $HD_SIZE $SWAP_SIZE $ROOT_SIZE $HOME_SIZE
 
 i=0
