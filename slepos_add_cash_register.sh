@@ -151,6 +151,7 @@ function request_base_information()
     read -e -p "Organization: " ORG
     read -e -p "Cash register object name: " OBJECT
     read -e -p "Cash register name (BIOS ID): " REGISTER_NAME
+    read -e -p "Distribution Container (cn)(press ENTER for \"default\"): " DISTRIBUTION_CONTAINER
     read -e -p "Image Name (cn): " IMAGE_CN
 
     ask_for_hd_information
@@ -202,6 +203,8 @@ function show_config_parameters()
     echo "* Organization: $ORG"
     echo "* Cash register object name: $OBJECT"
     echo "* Cash register name (BIOS ID): $REGISTER_NAME"
+    [ -z "$DISTRIBUTION_CONTAINER" ] && DISTRIBUTION_CONTAINER="default"
+    echo "* Distribution Container (cn): $DISTRIBUTION_CONTAINER"
     echo "* Image Name (cn): $IMAGE_CN"
     echo "* Hard disk size (MB): $HD_SIZE"
     echo "* Swap partition size (MB): $SWAP_SIZE"
@@ -308,7 +311,7 @@ then
     BASE="cn=${ROLE_NAME},${BASE}"
 fi
 
-add_cash_register $BASE $OBJECT "$REGISTER_NAME" cn=${IMAGE_CN},cn=default,cn=global,o=$ORG,c=$COUNTRY
+add_cash_register $BASE $OBJECT "$REGISTER_NAME" cn=${IMAGE_CN},cn=${DISTRIBUTION_CONTAINER},cn=global,o=$ORG,c=$COUNTRY
 add_hard_disk "cn=$OBJECT,$BASE" $HD_SIZE $SWAP_SIZE $ROOT_SIZE $HOME_SIZE
 
 i=0
