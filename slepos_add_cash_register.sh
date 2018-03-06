@@ -138,10 +138,10 @@ file_number=$1
 
 function ask_for_hd_information()
 {
-    read -e -p "Hard disk size: " HD_SIZE
-    read -e -p "Swap partition size: " SWAP_SIZE
-    read -e -p "Root partition size: " ROOT_SIZE
-    read -e -p "Home partition size (0 for no home): " HOME_SIZE
+    read -e -p "Hard disk size (MB): " HD_SIZE
+    read -e -p "Swap partition size (MB): " SWAP_SIZE
+    read -e -p "Root partition size (MB): " ROOT_SIZE
+    read -e -p "Home partition size (MB)(0 for no home): " HOME_SIZE
 }
 
 function request_base_information()
@@ -203,10 +203,10 @@ function show_config_parameters()
     echo "* Cash register object name: $OBJECT"
     echo "* Cash register name (BIOS ID): $REGISTER_NAME"
     echo "* Image Name (cn): $IMAGE_CN"
-    echo "* Hard disk size: $HD_SIZE"
-    echo "* Swap partition size: $SWAP_SIZE"
-    echo "* Root partition size: $ROOT_SIZE"
-    echo "* Home partition size (0 means disabled): $HOME_SIZE"
+    echo "* Hard disk size (MB): $HD_SIZE"
+    echo "* Swap partition size (MB): $SWAP_SIZE"
+    echo "* Root partition size (MB): $ROOT_SIZE"
+    echo "* Home partition size (MB)(0 means disabled): $HOME_SIZE"
     if [ ! -z "$ROLE_NAME" ];
     then
         echo "* Role object name: $ROLE_NAME"
