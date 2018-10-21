@@ -25,7 +25,7 @@
 # Comment the following line in order to run this script.
 echo "Please, edit this script with your favourite editor." && exit 1
 
-VERSION="1.0-SNAPSHOT"
+VERSION="1.1"
 
 POSADMIN=/usr/sbin/posAdmin
 SUDO=/usr/bin/sudo
