@@ -106,11 +106,22 @@ function show_config_parameters()
 
 show_config_parameters
 
+#
 # Setup Organizational Unit
 #
-#show_message "Adding organizational unit ${OU}..."
-#${SUDO} ${POSADMIN} --base o=${ORGANIZATION},c=${COUNTRY} --add --organizationalUnit --ou ${OU} --description 'My OU'
-#validate_posadmin_command $?
+
+${SUDO} ${POSADMIN} --query --list --DN ou=${OU},o=${ORGANIZATION},c=${COUNTRY} | \
+    grep -w "ou=${OU},o=${ORGANIZATION},c=${COUNTRY}" 2>&1 >/dev/null
+RET=$?
+
+if [ $RET -eq 1 ];
+then
+    show_message "Adding organizational unit ${OU}..."
+    ${SUDO} ${POSADMIN} --base o=${ORGANIZATION},c=${COUNTRY} --add --organizationalUnit --ou ${OU}
+else
+    show_message "Skipping adding organizational unit ${OU}. Already present..."
+fi
+validate_posadmin_command $?
 
 #
 # Setup store
