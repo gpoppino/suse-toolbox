@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # slepos_setup_branch.sh: Setups a SLEPOS Branch server interactively on LDAP
-# Copyright (C) 2017 Geronimo Poppino
+# Copyright (C) 2017, 2018 Geronimo Poppino
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
