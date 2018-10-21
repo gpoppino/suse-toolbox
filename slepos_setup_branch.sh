@@ -77,7 +77,7 @@ function validate_posadmin_command()
 
 function show_message()
 {
-    echo $@ | awk '{ printf "%-55s ", $0 }'
+    echo -n $@ | awk '{ printf "%-55s ", $0 }'
 }
 
 function show_config_parameters()
