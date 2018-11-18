@@ -135,7 +135,7 @@ ${SUDO} ${POSADMIN} \
   --scDhcpFixedRange ${FIXED_IP_RANGE_START},${FIXED_IP_RANGE_END} \
   --scDefaultGw $GATEWAY \
   --scDynamicIp TRUE --scDhcpExtern FALSE \
-  --scWorkstationBaseName ${WORKSTATION_BASE_NAME} --scEnumerationMask 000 \
+  --scWorkstationBaseName ${WORKSTATION_BASENAME} --scEnumerationMask 000 \
   --userPassword ${STORE_PASSWORD}
 validate_posadmin_command $?
 
