@@ -41,13 +41,13 @@ DISK=$1
       [ -b $partition ] && dd if=/dev/zero of=$partition bs=4096 count=1 oflag=direct
     done
 
-    # Wipe partition table
-    sgdisk -Z --clear -g /dev/${DISK}
+    # Wipe the beginning of the drive
+    dd if=/dev/zero of=/dev/${DISK} bs=512 count=34 oflag=direct
 
     # Wipe backup partition tables
     size=`blockdev --getsz /dev/${DISK}`
-    position=$((size/4096 - 33))
-    dd if=/dev/zero of=/dev/${DISK} bs=4096 count=33 seek=$position oflag=direct
+    position=$((size - 33))
+    dd if=/dev/zero of=/dev/${DISK} bs=512 count=33 seek=$position oflag=direct
 }
 
 function build_disks_list()
