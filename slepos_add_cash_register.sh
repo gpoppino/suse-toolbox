@@ -77,8 +77,14 @@ local root_fs_size=$4
 local home_fs_size=$5
 
     show_message "Adding hard disk ${HD_OBJECT_NAME}..."
-    ${SUDO} ${POSADMIN} --base $base --add --scHarddisk --cn $HD_OBJECT_NAME \
-        --scDevice $HD_DEVICE --scHdSize $hd_size
+    if [ $hd_size -ne 0 ];
+    then
+        ${SUDO} ${POSADMIN} --base $base --add --scHarddisk --cn $HD_OBJECT_NAME \
+            --scDevice $HD_DEVICE --scHdSize $hd_size
+    else
+        ${SUDO} ${POSADMIN} --base $base --add --scHarddisk --cn $HD_OBJECT_NAME \
+            --scDevice $HD_DEVICE
+    fi
     validate_command $?
 
     show_message "Adding SWAP partition..."
@@ -91,7 +97,7 @@ local home_fs_size=$5
         --scPartType $FS_TYPE --scPartMount '/' --scPartSize $root_fs_size
     validate_command $?
 
-    if [ $home_fs_size -ne 0 ];
+    if [ $home_fs_size == "x" ] || [ $home_fs_size -ne 0 ];
     then
         show_message "Adding /home partition..."
         ${SUDO} ${POSADMIN} --base cn=${HD_OBJECT_NAME},$base --add --scPartition --scPartNum 2 \
@@ -138,10 +144,10 @@ file_number=$1
 
 function ask_for_hd_information()
 {
-    read -e -p "Hard disk size (MB): " HD_SIZE
+    read -e -p "Hard disk size (MB)(0 to ignore size): " HD_SIZE
     read -e -p "Swap partition size (MB): " SWAP_SIZE
     read -e -p "Root partition size (MB): " ROOT_SIZE
-    read -e -p "Home partition size (MB)(0 for no home): " HOME_SIZE
+    read -e -p "Home partition size (MB)(0 for no home, x for remaining of disk): " HOME_SIZE
 }
 
 function request_base_information()
@@ -155,13 +161,17 @@ function request_base_information()
     read -e -p "Image Name (cn): " IMAGE_CN
 
     ask_for_hd_information
-    local hd_sum=$((${SWAP_SIZE} + ${ROOT_SIZE} + ${HOME_SIZE}))
-    while [ $hd_sum -gt $HD_SIZE ];
-    do
-        echo "WARNING: the HD size is smaller than the sum of the size of all the partitions. Please, try again:"
-        ask_for_hd_information
-        hd_sum=$((${SWAP_SIZE} + ${ROOT_SIZE} + ${HOME_SIZE}))
-    done
+    if [ $HD_SIZE -ne 0 ] ;
+    then
+        [ ${HOME_SIZE} == "x" ] && HOME_SIZE=0
+        local hd_sum=$((${SWAP_SIZE} + ${ROOT_SIZE} + ${HOME_SIZE}))
+        while [ $hd_sum -gt $HD_SIZE ];
+        do
+            echo "WARNING: the HD size is smaller than the sum of the size of all the partitions. Please, try again:"
+            ask_for_hd_information
+            hd_sum=$((${SWAP_SIZE} + ${ROOT_SIZE} + ${HOME_SIZE}))
+        done
+    fi
 
     if [ ! -z "$ROLE_NAME" ] && [ $ADD_ROLE_FLAG -eq 1 ];
     then
@@ -209,7 +219,7 @@ function show_config_parameters()
     echo "* Hard disk size (MB): $HD_SIZE"
     echo "* Swap partition size (MB): $SWAP_SIZE"
     echo "* Root partition size (MB): $ROOT_SIZE"
-    echo "* Home partition size (MB)(0 means disabled): $HOME_SIZE"
+    echo "* Home partition size (MB)(0 means disabled, x means maximum remaining size): $HOME_SIZE"
     if [ ! -z "$ROLE_NAME" ];
     then
         echo "* Role object name: $ROLE_NAME"
