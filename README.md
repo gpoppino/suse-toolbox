@@ -15,6 +15,10 @@ The following scripts are included, grouped by product or tool:
     - **slepos_setup_branch.sh**
     This script also uses the command `posAdmin` to setup a branch
     (scLocation object tree) on LDAP.
+    
+    - **slepos_add_workstation.sh**
+    This script uses the command `posAdmin` to add a workstation (scWorkstation object) to a branch or store.
+    
 
 - [SUSE Manager](https://www.suse.com/products/suse-manager/):
     - **suma_sync_repos.sh**
