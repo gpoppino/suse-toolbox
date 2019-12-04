@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# slepos_add_cash_register_instance.sh: Adds a SLEPOS cash register object (instance) interactively on LDAP
+# slepos_add_workstation.sh: Adds a SLEPOS workstation object interactively to LDAP
 # Copyright (C) 2019 Geronimo Poppino
 
 # This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ POSADMIN=/usr/sbin/posAdmin
 COUNTRY="PE"
 O="HPSA"
 
-function add_cash_register_object_instance()
+function add_workstation()
 {
 local base=$1
 local cn=$2
@@ -46,12 +46,12 @@ local role_dn=$8
         --scRefPcDn "$ref_pc_dn" --scPosRegisterType "$pos_register_type" $ROLE_OPTION
 }
 
-function request_cash_register_instance_information()
+function request_workstation_information()
 {
     echo "Please, enter the following cash register object instance information:"
     read -e -p "Organizational Unit: " OU
     read -e -p "Store name: " STORE
-    read -e -p "Cash register object name (cn): " CN
+    read -e -p "Workstation object name (cn): " CN
     read -e -p "IP address: " IP_ADDRESS
     read -e -p "MAC address: " MAC_ADDRESS
     read -e -p "Cash register type (BIOS ID): "  POS_REGISTER_TYPE
@@ -70,13 +70,13 @@ function request_cash_register_instance_information()
 function show_config_parameters()
 {
     echo
-    echo "This SLEPOS cash register instance is going to be added with the following parameters:"
+    echo "This SLEPOS workstation is going to be added with the following parameters:"
     echo
     echo "* Country: $COUNTRY"
     echo "* Organization: $O"
     echo "* Organizational unit: $OU"
     echo "* Store name: $STORE"
-    echo "* Cash register object name to create: $CN"
+    echo "* Workstation object name to create: $CN"
     echo "* IP address : $IP_ADDRESS"
     echo "* MAC address: $MAC_ADDRESS"
     echo "* Cash register type (BIOS ID): $POS_REGISTER_TYPE"
@@ -97,11 +97,11 @@ local RET=$1
     ${SUDO} ${POSADMIN} --validate
 }
 
-request_cash_register_instance_information
+request_workstation_information
 show_config_parameters
 
 MAC_ADDRESS=$(echo $MAC_ADDRESS | tr '[a-z]' '[A-Z]')
-add_cash_register_object_instance  "cn=${STORE},ou=${OU},o=${O},c=${COUNTRY}" $CN "$IP_ADDRESS" "$MAC_ADDRESS" "$REF_PC_DN" "$POS_REGISTER_TYPE" $ROLE_BASED $ROLE_DN
+add_workstation  "cn=${STORE},ou=${OU},o=${O},c=${COUNTRY}" $CN "$IP_ADDRESS" "$MAC_ADDRESS" "$REF_PC_DN" "$POS_REGISTER_TYPE" $ROLE_BASED $ROLE_DN
 
 validate_command $?
 
